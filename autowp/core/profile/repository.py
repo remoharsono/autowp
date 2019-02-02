@@ -23,7 +23,7 @@ class ProfileRepository(BaseRepo):
 		pass
 
 	@abstractmethod
-	def get_list(self, options: Options) -> Optional[List[Profile]]:
+	def get_list(self, options: Optional[Options] = None) -> Optional[List[Profile]]:
 		"""Get a list of registered profiles
 
 		Raises:
