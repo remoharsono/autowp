@@ -1,26 +1,11 @@
 from typing import NoReturn, List
 
-from autowp.core.shared.base import UseCase
+from autowp.core.profile.usecase.base import BaseProfileUseCase
 from autowp.core.shared.exceptions import StorageError, ValidationError, ValidationErrorMessage, ValidationErrorMessages
 from autowp.core.shared.utils import typechecker
 from autowp.core.profile.entity import Profile
-from autowp.core.profile.repository import ProfileRepository
 
-class RegisterUseCase(UseCase):
-	"""A usecase used when registering new profile
-
-	Attributes:
-		repo: Should be an instance of ProfileRepository
-	"""
-	
-	def __init__(self, repo: ProfileRepository) -> NoReturn:
-		"""Initialize object instance
-
-		Raises:
-			core.shared.exceptions.VarTypeError: If repo is not an instance of ProfileRepository
-		"""
-		typechecker.check(repo, ProfileRepository, ('repo', 'ProfileRepository'))
-		self.repo = repo
+class RegisterUseCase(BaseProfileUseCase):
 
 	def register(self, profile: Profile) -> bool:
 		"""Register new profile
@@ -58,7 +43,8 @@ class RegisterUseCase(UseCase):
 
 		not_safe = {}
 
-		if profile.password == '':
+		password = profile.password.to_hash()
+		if password == '':
 			password_error_empty = ValidationErrorMessage('Password should not be empty')
 			password_errors.append(password_error_empty)
 

@@ -1,13 +1,25 @@
 import unittest
+import hashlib
 from typing import Optional, List
 
 from autowp.core.shared.utils import typechecker
 from autowp.core.shared.exceptions import VarTypeError
+from autowp.core.shared.base import PasswordHasher
 
-from autowp.core.profile.entity import Profile
+from autowp.core.profile.entity import Profile, Password
 from autowp.core.profile.repository import ProfileRepository, Options
 from autowp.core.profile.usecase.register import RegisterUseCase
 from autowp.core.profile.usecase.delete import DeleteUseCase 
+
+class Sha256Hasher(PasswordHasher):
+
+	def hash(self) -> str:
+		hasher = hashlib.new('sha256')
+		if self.raw != '':
+			hasher.update(self.raw.encode())
+			return hasher.hexdigest()
+
+		return self.raw
 
 class MemoryProfileRepo(ProfileRepository):
 
@@ -41,7 +53,7 @@ class DeleteProfileTestCase(unittest.TestCase):
 
 	def test_delete_success(self):
 		repo = MemoryProfileRepo()
-		profile = Profile('myname', 'mypassword')
+		profile = Profile('myname', Password('mypassword', Sha256Hasher))
 		
 		register_case = RegisterUseCase(repo)
 		delete_case = DeleteUseCase(repo)

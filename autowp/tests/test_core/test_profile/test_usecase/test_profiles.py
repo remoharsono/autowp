@@ -1,13 +1,25 @@
 import unittest
+import hashlib
 from typing import Optional, List
 
 from autowp.core.shared.utils import typechecker
 from autowp.core.shared.exceptions import VarTypeError
+from autowp.core.shared.base import PasswordHasher
 
-from autowp.core.profile.entity import Profile
+from autowp.core.profile.entity import Profile, Password
 from autowp.core.profile.repository import ProfileRepository, Options
 from autowp.core.profile.usecase.register import RegisterUseCase
 from autowp.core.profile.usecase.profiles import ProfilesUseCase 
+
+class Sha256Hasher(PasswordHasher):
+
+	def hash(self) -> str:
+		hasher = hashlib.new('sha256')
+		if self.raw != '':
+			hasher.update(self.raw.encode())
+			return hasher.hexdigest()
+
+		return self.raw
 
 class MemoryProfileRepo(ProfileRepository):
 
@@ -55,8 +67,8 @@ class ProfilesUseCaseTestCase(unittest.TestCase):
 
 	def test_get_list_success(self):
 		repo = MemoryProfileRepo()
-		profile1 = Profile('myname', 'mypassword')
-		profile2 = Profile('myname2', 'mypassword2')
+		profile1 = Profile('myname', Password('mypassword', Sha256Hasher))
+		profile2 = Profile('myname2', Password('mypassword', Sha256Hasher))
 		
 		register_case = RegisterUseCase(repo)
 		register_case.register(profile1)

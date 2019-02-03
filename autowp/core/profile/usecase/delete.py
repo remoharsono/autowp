@@ -1,23 +1,8 @@
 from typing import NoReturn
 
-from autowp.core.shared.utils import typechecker
-from autowp.core.shared.base import UseCase 
-from autowp.core.profile.repository import ProfileRepository
+from autowp.core.profile.usecase.base import BaseProfileUseCase
 
-class DeleteUseCase(UseCase):
-	"""A usecase used when removing profile from database
-
-	Attributes:
-		repo: Should be an instance of ProfileRepository
-	"""
-	def __init__(self, repo: ProfileRepository) -> NoReturn:
-		"""Initialize object instance
-		
-		Raises:
-			core.shared.exceptions.VarTypeError: If repo is not an instance of ProfileRepository
-		"""
-		typechecker.check(repo, ProfileRepository, ('repo', 'ProfileRepository'))
-		self.repo = repo
+class DeleteUseCase(BaseProfileUseCase):
 
 	def remove(self, name: str) -> bool:
 		"""Delete profile from database

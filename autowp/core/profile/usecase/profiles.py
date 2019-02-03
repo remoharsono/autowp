@@ -1,24 +1,10 @@
 from typing import NoReturn, Optional, List
 
-from autowp.core.shared.utils import typechecker
-from autowp.core.shared.base import UseCase 
+from autowp.core.profile.usecase.base import BaseProfileUseCase
 from autowp.core.profile.entity import Profile
-from autowp.core.profile.repository import ProfileRepository, Options
+from autowp.core.profile.repository import Options
 
-class ProfilesUseCase(UseCase):
-	"""A usecase used when get a list of registered profiles
-	
-	Attributes:
-		repo: Should be an instance of ProfileRepository
-	"""
-	def __init__(self, repo: ProfileRepository) -> NoReturn:
-		"""Initialize object instance
-		
-		Raises:
-			core.shared.exceptions.VarTypeError: If repo is not an instance of ProfileRepository
-		"""
-		typechecker.check(repo, ProfileRepository, ('repo', 'ProfileRepository'))
-		self.repo = repo
+class ProfilesUseCase(BaseProfileUseCase):
 
 	def profiles(self, options: Optional[Options]) -> Optional[List[Profile]]:
 		"""Used to get a list of profiles (if any)
