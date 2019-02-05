@@ -4,7 +4,7 @@ from autowp.core.shared.base import PasswordHasher
 
 @dataclass(frozen=True)
 class Password:
-	raw: Optional[str]
+	raw: str 
 	hasher: PasswordHasher
 	hashed: Optional[str] = None
 
@@ -17,3 +17,4 @@ class Password:
 class Profile:
 	name: str 
 	password: Password 
+	id: Optional[str] = None
