@@ -20,6 +20,12 @@ from autowp.core.shared.entity import State
 SALT = '123'
 MEMORY = {}
 
+def _on_success_cb(salt: str, profile: Profile) -> Session:
+	payload = {'name': profile.name}
+	token = Token(salt, payload, HashlibToken)
+	sess = Session(token, False, str(uuid.uuid4())) 
+	return sess
+
 class HashlibToken(Tokenizer):
 
 	def encode(self) -> str:
@@ -107,12 +113,6 @@ class LoginUseCaseTestCase(unittest.TestCase):
 
 		profile = Profile('test', Password('test', Sha256Hasher))
 		self.assertTrue(repo_profile.create(profile))
-
-		def _on_success_cb(salt: str, profile: Profile) -> Session:
-			payload = {'name': profile.name}
-			token = Token(salt, payload, HashlibToken)
-			sess = Session(token, False, str(uuid.uuid4())) 
-			return sess
 
 		login_uc = LoginUseCase(repo, repo_profile)
 		session = login_uc.login(SALT, profile, _on_success_cb)
