@@ -1,10 +1,12 @@
+from typing import Optional
 from dataclasses import dataclass
 from autowp.core.shared.base import PasswordHasher
 
 @dataclass(frozen=True)
 class Password:
-	raw: str
+	raw: Optional[str]
 	hasher: PasswordHasher
+	hashed: Optional[str] = None
 
 	def to_hash(self) -> str:
 		"""This method used to hash raw password"""
