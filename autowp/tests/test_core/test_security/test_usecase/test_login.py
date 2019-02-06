@@ -13,7 +13,7 @@ from autowp.core.security.entity import Session, Token
 from autowp.core.security.repository import SecurityRepo
 from autowp.core.security.usecase.login import LoginUseCase, LoginSuccessCallback
 
-from autowp.core.shared.exceptions import ValidationError
+from autowp.core.shared.exceptions import ValidationError, VarTypeError
 from autowp.core.shared.base import PasswordHasher, Tokenizer
 from autowp.core.shared.entity import State
 
@@ -121,3 +121,59 @@ class LoginUseCaseTestCase(unittest.TestCase):
 		self.assertIsNotNone(session.id)
 		self.assertIsNone(session.token.options)
 		self.assertTrue(isinstance(session.token.build(), str))
+
+	def test_profile_not_exist(self):
+		repo = MemorySecurityRepo(MEMORY)
+		repo_profile = MemoryProfileRepo(MEMORY)
+
+		profile = Profile('test', Password('test', Sha256Hasher))
+		login_uc = LoginUseCase(repo, repo_profile)
+
+		session = login_uc.login(SALT, profile, _on_success_cb)
+
+		self.assertIsInstance(session, State)
+		self.assertEqual(session.name, login_uc.STATE_NAME)
+		self.assertEqual(session.status, login_uc.STATE_FAILED_NO_PROFILE)
+
+	def test_profile_password_mismatch(self):
+		repo = MemorySecurityRepo(MEMORY)
+		repo_profile = MemoryProfileRepo(MEMORY)
+
+		profile = Profile('test', Password('test', Sha256Hasher))
+		self.assertTrue(repo_profile.create(profile))
+
+		profile_invalid = Profile('test', Password('test2', Sha256Hasher))
+		login_uc = LoginUseCase(repo, repo_profile)
+		session = login_uc.login(SALT, profile_invalid, _on_success_cb)
+
+		self.assertIsInstance(session, State)
+		self.assertEqual(session.name, login_uc.STATE_NAME)
+		self.assertEqual(session.status, login_uc.STATE_FAILED_PASSWORD_MISMTACH)
+
+	def test_profile_not_valid_no_name(self):
+		repo = MemorySecurityRepo(MEMORY)
+		repo_profile = MemoryProfileRepo(MEMORY)
+
+		profile = Profile('', Password('test', Sha256Hasher))
+		login_uc = LoginUseCase(repo, repo_profile)
+		
+		with self.assertRaises(ValidationError):
+			session = login_uc.login(SALT, profile, _on_success_cb)
+
+	def test_profile_not_valid_no_password(self):
+		repo = MemorySecurityRepo(MEMORY)
+		repo_profile = MemoryProfileRepo(MEMORY)
+
+		profile = Profile('test', Password('', Sha256Hasher))
+		login_uc = LoginUseCase(repo, repo_profile)
+		
+		with self.assertRaises(ValidationError):
+			session = login_uc.login(SALT, profile, _on_success_cb)
+
+	def test_invalid_profile_type(self):
+		repo = MemorySecurityRepo(MEMORY)
+		repo_profile = MemoryProfileRepo(MEMORY)
+
+		login_uc = LoginUseCase(repo, repo_profile)		
+		with self.assertRaises(VarTypeError):
+			session = login_uc.login(SALT, 'test str', _on_success_cb)

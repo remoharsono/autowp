@@ -9,6 +9,14 @@ from autowp.core.security.entity import Session
 from autowp.core.profile.utils.validation import ValidateProfile
 from autowp.core.profile.entity import Profile
 
+'''
+Example success callback:
+
+def _on_success_callback(salt: str, profile: Profile) -> Session:
+	pass
+
+You need to create a Session object inside your callback
+'''
 LoginSuccessCallback = Callable[[str, Profile], Session]
 
 class LoginUseCase(BaseSecurityUseCase, ValidateProfile):
@@ -28,9 +36,7 @@ class LoginUseCase(BaseSecurityUseCase, ValidateProfile):
 	"""
 
 	STATE_NAME = 'user_logging_in'
-	STATE_SUCCESS = 'user_valid'
 	STATE_FAILED_NO_PROFILE = 'failed_no_profile'
-	STATE_FAILED_NO_PASSWORD_HASED = 'password_hashed_empty'
 	STATE_FAILED_PASSWORD_MISMTACH = 'password_mismatch'
 
 	def login(self, salt: str, given_profile: Profile, success_cb: LoginSuccessCallback) -> Union[State, Session]:
@@ -46,9 +52,6 @@ class LoginUseCase(BaseSecurityUseCase, ValidateProfile):
 		profile = self.repo_profile.get_detail(given_profile.name)
 		if not profile: # profile not exist
 			return State(self.STATE_NAME, self.STATE_FAILED_NO_PROFILE, 'Profile not exist')
-
-		if not profile.password.hashed:
-			return State(self.STATE_NAME, self.STATE_FAILED_NO_PASSWORD_HASED, 'Invalid profile entity')
 
 		if given_profile.password.to_hash() != profile.password.hashed:
 			return State(self.STATE_NAME, self.STATE_FAILED_PASSWORD_MISMTACH, 'Password mismatch')
