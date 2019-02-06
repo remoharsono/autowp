@@ -56,4 +56,11 @@ class LoginUseCase(BaseSecurityUseCase, ValidateProfile):
 		if given_profile.password.to_hash() != profile.password.hashed:
 			return State(self.STATE_NAME, self.STATE_FAILED_PASSWORD_MISMTACH, 'Password mismatch')
 
-		return success_cb(salt, profile)
+		# use callback to create a session object
+		# we need to save this session to our data storage
+		# and generate a new session object with an id from storage
+		session_raw = success_cb(salt, profile)
+		session_id = self.repo.register(session_raw)
+		session = Session(token=session_raw.token, locked=False, id=session_id)
+
+		return session

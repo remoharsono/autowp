@@ -12,7 +12,10 @@ class SecurityRepo(BaseRepo):
 
 	@abstractmethod
 	def register(self, session: Session) -> str:
-		"""This method used to create new session"""
+		"""This method used to create new session
+		
+		This method must be return an id from database
+		"""
 		pass
 
 	@abstractmethod

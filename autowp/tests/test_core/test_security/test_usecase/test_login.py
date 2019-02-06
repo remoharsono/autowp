@@ -23,7 +23,7 @@ MEMORY = {}
 def _on_success_cb(salt: str, profile: Profile) -> Session:
 	payload = {'name': profile.name}
 	token = Token(salt, payload, HashlibToken)
-	sess = Session(token, False, str(uuid.uuid4())) 
+	sess = Session(token, False) 
 	return sess
 
 class HashlibToken(Tokenizer):
