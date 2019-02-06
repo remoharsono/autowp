@@ -24,10 +24,21 @@ class SecurityRepo(BaseRepo):
 		pass
 
 	@abstractmethod
-	def get(self, id: str) -> Optional[Session]:
+	def get(self, id: Optional[str] = None) -> Optional[Session]:
 		"""This method used to get detail session
 
-		Should be return None, if session not exist
+		Should be return None, if session not exist. We need to
+		make id param as optional, it will give more flexibility
+		to our caller.
+
+		Our simple scenario is, just check from database for current
+		session storage. If we have at least one, then just return 
+		that session data.  If we doesn't have any session data in our
+		session storage, then return None. If id has a valid value (not None),
+		we need to get session based on id from database.
+
+		Actually this method almost have same function with is_exist, but if 
+		is_exist will return boolean value than an optional session data.
 		"""
 		pass
 
