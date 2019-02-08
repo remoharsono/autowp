@@ -24,7 +24,6 @@ setup(name='autowp',
 	packages=['autowp'],
 	install_requires=[
 		'fabric',
-		'fire',
 		'pymongo'
 	],
 	include_package_data=True,
