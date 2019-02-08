@@ -108,6 +108,9 @@ class MemoryProfileRepo(ProfileRepository):
 			return self.in_memory.get(name)
 
 		return None
+	
+	def id(self, id: str) -> Optional[Profile]:
+		pass
 
 	def remove(self, name: str) -> bool:
 		typechecker.check(name, str, ('name', 'str'))

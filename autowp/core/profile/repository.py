@@ -43,6 +43,15 @@ class ProfileRepository(BaseRepo):
 		pass
 
 	@abstractmethod
+	def id(self, id: str) -> Optional[Profile]:
+		"""Get detail profile by id
+		
+		Raises:
+			core.shared.exceptions.VarTypeError: If given name is not a string
+		"""
+		pass
+
+	@abstractmethod
 	def remove(self, name: str) -> bool:
 		"""Remove profile from database
 		

@@ -12,6 +12,7 @@ from autowp.core.profile.repository import ProfileRepository, Options
 from autowp.core.security.entity import Session, Token
 from autowp.core.security.repository import SecurityRepo
 from autowp.core.security.usecase.login import LoginUseCase, LoginSuccessCallback
+from autowp.core.security.usecase.current_profile import CurrentProfileUseCase
 
 from autowp.core.shared.exceptions import ValidationError, VarTypeError
 from autowp.core.shared.base import PasswordHasher, Tokenizer
@@ -24,7 +25,7 @@ MEMORY_SESSION = {}
 def _on_success_cb(salt: str, profile: Profile) -> Session:
 	payload = {'name': profile.name}
 	token = Token(salt, payload, HashlibToken)
-	sess = Session(token, False) 
+	sess = Session(token=token, locked=False, profile_id=profile.id) 
 	return sess
 
 class HashlibToken(Tokenizer):
@@ -62,16 +63,26 @@ class MemorySecurityRepo(SecurityRepo):
 		"""This method used to remove single session"""
 		pass
 
-	def get(self, id: str) -> Optional[Session]:
+	def get(self, id: Optional[str] = None) -> Optional[Session]:
 		"""This method used to get detail session
 
 		Should be return None, if session not exist
 		"""
-		pass
+		if id is not None:
+			return self.in_memory.get(id)
+		else:
+			if self.in_memory:
+				keys = list(self.in_memory.keys())
+				return self.in_memory[keys[0]]
+
+		return None
 
 	def is_exist(self, id: Optional[str] = None) -> bool:
 		"""This method used to check if session exist or not"""
-		pass
+		if id is not None:
+			return id in self.in_memory
+		else:
+			return len(self.in_memory) >= 1
 
 	def lock(self, id: Optional[str] = None) -> NoReturn:
 		"""This method used to set current session as locked"""
@@ -82,8 +93,9 @@ class MemoryProfileRepo(ProfileRepository):
 		self.in_memory = memory 
 
 	def create(self, profile: Profile) -> bool:
+		id = str(uuid.uuid4()) 
 		new_password = Password(profile.password.raw, Sha256Hasher, profile.password.to_hash())
-		self.in_memory[profile.name] = Profile(profile.name, new_password) 
+		self.in_memory[profile.name] = Profile(profile.name, new_password, id) 
 		return True
 
 	def get_list(self, options: Options) -> List[Profile]:
@@ -96,7 +108,10 @@ class MemoryProfileRepo(ProfileRepository):
 		return None
 	
 	def id(self, id: str) -> Optional[Profile]:
-		pass
+		if self.in_memory:
+			for k, v in self.in_memory.items():
+				if v.id == id:
+					return self.in_memory[k]
 
 	def remove(self, name: str) -> bool:
 		typechecker.check(name, str, ('name', 'str'))
@@ -108,10 +123,9 @@ class MemoryProfileRepo(ProfileRepository):
 
 		return False 
 
+class CurrentProfileTestCase(unittest.TestCase):
 
-class LoginUseCaseTestCase(unittest.TestCase):
-
-	def test_success(self):
+	def test_get_profile_success(self):
 		repo = MemorySecurityRepo(MEMORY_SESSION)
 		repo_profile = MemoryProfileRepo(MEMORY)
 
@@ -120,64 +134,20 @@ class LoginUseCaseTestCase(unittest.TestCase):
 
 		login_uc = LoginUseCase(repo, repo_profile)
 		session = login_uc.login(SALT, profile, _on_success_cb)
-		
+
 		self.assertFalse(isinstance(session, State))
 		self.assertIsNotNone(session.id)
-		self.assertIsNone(session.token.options)
-		self.assertTrue(isinstance(session.token.build(), str))
+		self.assertIsNotNone(session.profile_id)
 
-	def test_profile_not_exist(self):
+		current_profile_uc = CurrentProfileUseCase(repo, repo_profile)
+		current_profile = current_profile_uc.current_profile()
+		self.assertIsNotNone(current_profile)
+		self.assertIsInstance(current_profile, Profile)
+
+	def test_get_profile_session_not_exist(self):
 		repo = MemorySecurityRepo(MEMORY_SESSION)
 		repo_profile = MemoryProfileRepo(MEMORY)
 
-		profile = Profile('test', Password('test', Sha256Hasher))
-		login_uc = LoginUseCase(repo, repo_profile)
-
-		session = login_uc.login(SALT, profile, _on_success_cb)
-
-		self.assertIsInstance(session, State)
-		self.assertEqual(session.name, login_uc.STATE_NAME)
-		self.assertEqual(session.status, login_uc.STATE_FAILED_NO_PROFILE)
-
-	def test_profile_password_mismatch(self):
-		repo = MemorySecurityRepo(MEMORY_SESSION)
-		repo_profile = MemoryProfileRepo(MEMORY)
-
-		profile = Profile('test', Password('test', Sha256Hasher))
-		self.assertTrue(repo_profile.create(profile))
-
-		profile_invalid = Profile('test', Password('test2', Sha256Hasher))
-		login_uc = LoginUseCase(repo, repo_profile)
-		session = login_uc.login(SALT, profile_invalid, _on_success_cb)
-
-		self.assertIsInstance(session, State)
-		self.assertEqual(session.name, login_uc.STATE_NAME)
-		self.assertEqual(session.status, login_uc.STATE_FAILED_PASSWORD_MISMTACH)
-
-	def test_profile_not_valid_no_name(self):
-		repo = MemorySecurityRepo(MEMORY_SESSION)
-		repo_profile = MemoryProfileRepo(MEMORY)
-
-		profile = Profile('', Password('test', Sha256Hasher))
-		login_uc = LoginUseCase(repo, repo_profile)
-		
-		with self.assertRaises(ValidationError):
-			session = login_uc.login(SALT, profile, _on_success_cb)
-
-	def test_profile_not_valid_no_password(self):
-		repo = MemorySecurityRepo(MEMORY_SESSION)
-		repo_profile = MemoryProfileRepo(MEMORY)
-
-		profile = Profile('test', Password('', Sha256Hasher))
-		login_uc = LoginUseCase(repo, repo_profile)
-		
-		with self.assertRaises(ValidationError):
-			session = login_uc.login(SALT, profile, _on_success_cb)
-
-	def test_invalid_profile_type(self):
-		repo = MemorySecurityRepo(MEMORY_SESSION)
-		repo_profile = MemoryProfileRepo(MEMORY)
-
-		login_uc = LoginUseCase(repo, repo_profile)		
-		with self.assertRaises(VarTypeError):
-			session = login_uc.login(SALT, 'test str', _on_success_cb)
+		current_profile_uc = CurrentProfileUseCase(repo, repo_profile)
+		current_profile = current_profile_uc.current_profile()
+		self.assertIsNone(current_profile)

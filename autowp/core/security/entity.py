@@ -27,4 +27,5 @@ class Token:
 class Session:
 	token: Token
 	locked: bool
+	profile_id: Optional[str] = None # should be an id from database
 	id: Optional[str]  = None # should id from database

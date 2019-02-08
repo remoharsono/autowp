@@ -61,6 +61,13 @@ class LoginUseCase(BaseSecurityUseCase, ValidateProfile):
 		# and generate a new session object with an id from storage
 		session_raw = success_cb(salt, profile)
 		session_id = self.repo.register(session_raw)
-		session = Session(locked=False, token=session_raw.token, id=session_id)
+
+		# generate new session
+		session = Session(
+			locked=False, 
+			token=session_raw.token, 
+			id=session_id, 
+			profile_id=session_raw.profile_id
+		)
 
 		return session
