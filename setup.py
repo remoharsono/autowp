@@ -23,6 +23,7 @@ setup(name='autowp',
 	license='MIT',
 	packages=['autowp'],
 	install_requires=[
+		'click',
 		'fabric',
 		'pymongo'
 	],
