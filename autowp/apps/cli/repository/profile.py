@@ -13,7 +13,7 @@ class ProfileRepository(ProfileRepoInterface, BaseRepository):
 
 	COLLNAME = 'profiles'
 
-	def create(self, profile: Profile) -> bool:
+	def create(self, profile: Profile) -> Profile:
 		"""Create new user profile
 		
 		Raises:
@@ -36,10 +36,13 @@ class ProfileRepository(ProfileRepoInterface, BaseRepository):
 				payload['password'] = profile.password.to_hash()
 
 			created = coll.insert_one(payload)
-			if created:
-				return True
+			saved_profile = Profile(
+				id=created.inserted_id, 
+				name=profile.name, 
+				password=payload.get('password')
+			)
 
-			return False
+			return saved_profile
 		except PyMongoError as exc_pymongo:
 			raise StorageError(exc_pymongo)
 

@@ -95,8 +95,9 @@ class MemoryProfileRepo(ProfileRepository):
 	def create(self, profile: Profile) -> bool:
 		id = str(uuid.uuid4()) 
 		new_password = Password(profile.password.raw, Sha256Hasher, profile.password.to_hash())
-		self.in_memory[profile.name] = Profile(profile.name, new_password, id) 
-		return True
+		new_profile = Profile(profile.name, new_password, id)
+		self.in_memory[profile.name] = new_profile 
+		return new_profile 
 
 	def get_list(self, options: Options) -> List[Profile]:
 		pass 

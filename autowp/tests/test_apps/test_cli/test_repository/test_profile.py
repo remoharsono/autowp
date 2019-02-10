@@ -20,7 +20,11 @@ class ProfileRepoTestCase(unittest.TestCase):
 		profile = Profile(name='test_name', password=password)
 
 		repo = ProfileRepository(config())
-		self.assertTrue(repo.create(profile))
+		saved = repo.create(profile)
+		self.assertTrue(saved)
+		self.assertEqual(saved.name, profile.name)
+		self.assertEqual(saved.password, profile.password.to_hash())
+		self.assertIsNotNone(saved.id)
 
 	def test_get_by_name(self):
 		password = Password(raw='test_password', hasher=Sha256Hasher)
@@ -97,15 +101,6 @@ class ProfileRepoTestCase(unittest.TestCase):
 		repo = ProfileRepository(config())
 		docs = repo.get_list()
 		self.assertIsNone(docs)
-
-	@mock.patch('autowp.apps.shared.base.repository.pymongo.collection.Collection.insert_one')	
-	def test_create_failed(self, mock_insert):
-		mock_insert.return_value = False
-		password = Password(raw='test_password', hasher=Sha256Hasher)
-		profile = Profile(name='test_name', password=password)
-
-		repo = ProfileRepository(config())
-		self.assertFalse(repo.create(profile))
 
 	def test_create_invalid_profile(self):
 		with self.assertRaises(VarTypeError):

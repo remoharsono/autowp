@@ -10,7 +10,7 @@ class ProfileRepository(BaseRepo):
 	"""An interface of ProfileRepository"""
 
 	@abstractmethod
-	def create(self, profile: Profile) -> bool:
+	def create(self, profile: Profile) -> Profile:
 		"""Create new user profile
 
 		We should check profile parameter is an instance of Profile or not
