@@ -81,10 +81,11 @@ class MemoryProfileRepo(ProfileRepository):
 	def __init__(self, memory):
 		self.in_memory = memory 
 
-	def create(self, profile: Profile) -> bool:
+	def create(self, profile: Profile) -> Profile:
 		new_password = Password(profile.password.raw, Sha256Hasher, profile.password.to_hash())
-		self.in_memory[profile.name] = Profile(profile.name, new_password) 
-		return True
+		new_profile = Profile(profile.name, new_password)
+		self.in_memory[profile.name] = new_profile
+		return new_profile 
 
 	def get_list(self, options: Options) -> List[Profile]:
 		pass 

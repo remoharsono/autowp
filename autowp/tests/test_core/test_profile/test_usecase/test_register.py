@@ -23,9 +23,9 @@ class MemoryProfileRepo(ProfileRepository):
 	def __init__(self):
 		self.in_memory = {}
 
-	def create(self, profile: Profile) -> bool:
+	def create(self, profile: Profile) -> Profile:
 		self.in_memory[profile.name] = profile
-		return True
+		return profile 
 
 	def get_list(self, options: Options) -> List[Profile]:
 		pass 

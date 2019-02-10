@@ -26,12 +26,12 @@ class ValidateProfile(object):
 
 		not_safe = {}
 
-		password = profile.password.to_hash()
+		password = profile.password.raw
 		if password == '':
 			password_error_empty = ValidationErrorMessage('Password should not be empty')
 			password_errors.append(password_error_empty)
 
-		if profile.name == '':
+		if profile.name == '' or not isinstance(profile.name, str):
 			name_error_empty = ValidationErrorMessage('Profile name should not be empty value')
 			name_errors.append(name_error_empty)
 
