@@ -22,6 +22,82 @@ class ProfileRepoTestCase(unittest.TestCase):
 		repo = ProfileRepository(config())
 		self.assertTrue(repo.create(profile))
 
+	def test_get_by_name(self):
+		password = Password(raw='test_password', hasher=Sha256Hasher)
+		profile = Profile(name='test_name', password=password)
+		
+		repo = ProfileRepository(config())
+		self.assertTrue(repo.create(profile))
+
+		doc = repo.get_detail(profile.name)
+		self.assertIsNotNone(doc)
+		self.assertEqual(doc.name, profile.name)
+	
+	def test_get_by_id(self):
+		password = Password(raw='test_password', hasher=Sha256Hasher)
+		profile = Profile(name='test_name', password=password)
+		
+		repo = ProfileRepository(config())
+		self.assertTrue(repo.create(profile))
+
+		doc_by_name = repo.get_detail(profile.name)
+
+		self.assertIsNotNone(doc_by_name)
+		self.assertEqual(doc_by_name.name, profile.name)
+
+		doc_by_id = repo.id(doc_by_name.id)
+		self.assertIsNotNone(doc_by_id)
+
+	def test_remove_success(self):
+		password = Password(raw='test_password', hasher=Sha256Hasher)
+		profile = Profile(name='test_name', password=password)
+		
+		repo = ProfileRepository(config())
+		self.assertTrue(repo.create(profile))
+		self.assertTrue(repo.remove(profile.name))
+
+		doc = repo.get_detail(profile.name)
+		self.assertIsNone(doc)
+
+	def test_get_list(self):
+		password = Password(raw='test_password', hasher=Sha256Hasher)
+		profile = Profile(name='test_name', password=password)
+		
+		password2 = Password(raw='test_password', hasher=Sha256Hasher)
+		profile2 = Profile(name='test_name', password=password)
+		
+		repo = ProfileRepository(config())
+		repo.create(profile)
+		repo.create(profile2)
+
+		docs = repo.get_list({
+			'filter': {'name': 'test_name'}
+		})
+
+		self.assertIsInstance(docs, list)
+		self.assertEqual(2, len(docs))
+
+		doc1 = docs[0]
+		self.assertEqual(doc1.name, profile.name)
+
+	def test_get_list_empty(self):
+		repo = ProfileRepository(config())
+		docs = repo.get_list({
+			'filter': {'name': 'test_name'}
+		})
+
+		self.assertIsNone(docs)
+
+	def test_get_list_not_dict(self):
+		repo = ProfileRepository(config())
+		docs = repo.get_list('invalid')
+		self.assertIsNone(docs)
+
+	def test_get_list_no_options(self):
+		repo = ProfileRepository(config())
+		docs = repo.get_list()
+		self.assertIsNone(docs)
+
 	@mock.patch('autowp.apps.shared.base.repository.pymongo.collection.Collection.insert_one')	
 	def test_create_failed(self, mock_insert):
 		mock_insert.return_value = False
@@ -35,25 +111,3 @@ class ProfileRepoTestCase(unittest.TestCase):
 		with self.assertRaises(VarTypeError):
 			repo = ProfileRepository(config())
 			repo.create('testing')
-
-	@mock.patch('autowp.apps.shared.config.parser.os')
-	def test_connection_lost(self, mock_os):
-		def side_effect(value):
-			envs = {
-				'MONGO_HOST': 'mongodb://localhost:9000/autowp_test', 
-				'MONGO_DBNAME': 'test_dbname', 
-				'MONGO_CONNECT_TIMEOUT': 500,
-				'MONGO_SOCKET_TIMEOUT': 100,
-				'MONGO_SERVER_SELECTION_TIMEOUT': None
-			}
-
-			return envs[value]
-
-		mock_os.getenv.side_effect = side_effect
-
-		password = Password(raw='test_password', hasher=Sha256Hasher)
-		profile = Profile(name='test_name', password=password)
-
-		with self.assertRaises(StorageError):
-			repo = ProfileRepository(config())
-			repo.create(profile)

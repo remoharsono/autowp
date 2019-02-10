@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 from dataclasses import dataclass
 from autowp.core.shared.base import PasswordHasher
 
@@ -16,5 +16,5 @@ class Password:
 @dataclass(frozen=True)
 class Profile:
 	name: str 
-	password: Password 
+	password: Union[Password, str] 
 	id: Optional[str] = None
