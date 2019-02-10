@@ -1,4 +1,5 @@
 import os
+from autowp.apps.shared.base.exceptions import ConfigError
 from autowp.apps.shared.config.data import Config
 
 class Parser(object):
@@ -9,6 +10,10 @@ class Parser(object):
 		mongo_conn_timeout = os.getenv('MONGO_CONNECT_TIMEOUT')
 		mongo_socket_timeout = os.getenv('MONGO_SOCKET_TIMEOUT')
 		mongo_server_selection_timeout = os.getenv('MONGO_SERVER_SELECTION_TIMEOUT')
+
+		# cannot continue without mongo
+		if not mongo_host:
+			raise ConfigError('MONGO_HOST', 'You should setup mongo host uri before using this application.')
 
 		# rewrite value connection timeout
 		if not mongo_conn_timeout:

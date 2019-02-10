@@ -9,7 +9,7 @@ from autowp.core.profile.usecase.base import BaseProfileUseCase
 
 class RegisterUseCase(BaseProfileUseCase, ValidateProfile):
 
-	def register(self, profile: Profile) -> bool:
+	def register(self, profile: Profile) -> Profile:
 		"""Register new profile
 
 		We need to check if given profile is an instance of Profile entiy

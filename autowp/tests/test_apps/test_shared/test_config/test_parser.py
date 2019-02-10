@@ -1,6 +1,7 @@
 import unittest
 from unittest import mock
 
+from autowp.apps.shared.base.exceptions import ConfigError
 from autowp.apps.shared.config.parser import Parser
 from autowp.apps.shared.config.data import Config
 
@@ -41,6 +42,5 @@ class TestConfigParser(unittest.TestCase):
 			return envs[value]
 
 		mock_os.getenv.side_effect = side_effect
-		parser = Parser(Config)
-		self.assertIsNone(parser.config.mongo_host)
-		self.assertIsNone(parser.config.mongo_dbname)
+		with self.assertRaises(ConfigError):
+			parser = Parser(Config)
