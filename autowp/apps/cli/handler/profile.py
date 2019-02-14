@@ -39,17 +39,11 @@ def list_profiles() -> NoReturn:
 @click.argument('name')
 def delete(name: str) -> NoReturn:
 	click.echo('=========================')
-	click.echo(f'Deleting profile: {name}')
+	click.echo(f'Deleting profile...')
 
-	def _main():
-		repo = ProfileRepository(config())
-		adapter = DeleteAdapter(repo)
-		adapter.remove(name)
+	repo = ProfileRepository(config())
+	adapter = DeleteAdapter(repo)
+	adapter.remove(name)
 
-	def _success():
-		# registering profile should be success here
-		click.echo(f'Your profile: {name}, has been deleted')
-		click.echo('=========================')
-
-	# run process
-	runner(_main, _success)
+	click.echo(f'Your profile: {name}, has been deleted')
+	click.echo('=========================')
