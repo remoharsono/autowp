@@ -24,6 +24,7 @@ setup(name='autowp',
 	packages=['autowp'],
 	install_requires=[
 		'click',
+		'terminaltables',
 		'fabric',
 		'pymongo'
 	],
