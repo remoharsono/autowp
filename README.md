@@ -35,3 +35,14 @@ Make sure you have python 3.7.x and pip installed on your system.
 ```python
 pip install autowp
 ```
+
+# Usages
+
+Manage profiles
+
+```
+autowp profile:register myname mypass // register profiles
+autowp profile:delete myname // delete profile
+autowp profile:list // list of registered profiles
+```
+
