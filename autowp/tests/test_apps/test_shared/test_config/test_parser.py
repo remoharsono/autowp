@@ -15,7 +15,8 @@ class TestConfigParser(unittest.TestCase):
 				'MONGO_DBNAME': 'test_dbname', 
 				'MONGO_CONNECT_TIMEOUT': None,
 				'MONGO_SOCKET_TIMEOUT': None,
-				'MONGO_SERVER_SELECTION_TIMEOUT': None
+				'MONGO_SERVER_SELECTION_TIMEOUT': None,
+				'SALT': None
 			}
 
 			return envs[value]
@@ -36,7 +37,8 @@ class TestConfigParser(unittest.TestCase):
 				'MONGO_DBNAME': None, 
 				'MONGO_CONNECT_TIMEOUT': None,
 				'MONGO_SOCKET_TIMEOUT': None,
-				'MONGO_SERVER_SELECTION_TIMEOUT': None
+				'MONGO_SERVER_SELECTION_TIMEOUT': None,
+				'SALT': None
 			}
 
 			return envs[value]
