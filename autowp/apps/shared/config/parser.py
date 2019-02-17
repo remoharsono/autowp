@@ -12,6 +12,10 @@ class Parser(object):
 		mongo_server_selection_timeout = os.getenv('MONGO_SERVER_SELECTION_TIMEOUT')
 		salt = os.getenv('SALT')
 
+		# cannot continue without salt key
+		if not salt:
+			raise ConfigError('SALT', 'You should set your salt key')
+
 		# cannot continue without mongo
 		if not mongo_host:
 			raise ConfigError('MONGO_HOST', 'You should setup mongo host uri before using this application.')

@@ -1,12 +1,12 @@
 import click
-from typing import Callable, NoReturn
+from typing import Callable, NoReturn, Optional
 
 from autowp.apps.shared.base.exceptions import ConfigError
 from autowp.core.shared.exceptions import ValidationError, VarTypeError, StorageError
 
 Callback = Callable[[None], None]
 
-def runner(main_cb: Callback, success_cb: Callback) -> NoReturn:
+def runner(main_cb: Callback, success_cb: Optional[Callback] = None) -> NoReturn:
 	"""Used to run main handler process"""
 	try:
 		main_cb()
@@ -25,5 +25,12 @@ def runner(main_cb: Callback, success_cb: Callback) -> NoReturn:
 	except ConfigError as exc_config:
 		click.secho(exc_config.get_message(), fg='red')
 		click.echo('=========================')
+	except NameError as exc_name_err:
+		click.secho(f'Naming error: {exc_name_err}', fg='red')
+		click.echo('=========================')
+	except TypeError as exc_type_err:
+		click.secho(f'Type error: {exc_type_err}', fg='red')
+		click.echo('=========================')
 	else:
-		success_cb()
+		if success_cb:
+			success_cb()

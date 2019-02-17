@@ -124,8 +124,8 @@ class SecurityRepoTestCase(unittest.TestCase):
 		session = repo_sec.get(session_id)
 
 		self.assertIsInstance(session, Session)
-		self.assertEqual(session.token, token.build())
-		self.assertEqual(session.profile_id, saved.id)
+		self.assertEqual(session.token, token.build().decode())
+		self.assertEqual(session.profile_id, str(saved.id))
 		self.assertFalse(session.locked)
 
 	def test_get_session_none(self):
@@ -150,8 +150,8 @@ class SecurityRepoTestCase(unittest.TestCase):
 		session = repo_sec.get(session_id)
 
 		self.assertIsInstance(session, Session)
-		self.assertEqual(session.token, token.build())
-		self.assertEqual(session.profile_id, saved.id)
+		self.assertEqual(session.token, token.build().decode())
+		self.assertEqual(session.profile_id, str(saved.id))
 		self.assertFalse(session.locked)
 
 		repo_sec.lock(id=session_id)
@@ -175,8 +175,8 @@ class SecurityRepoTestCase(unittest.TestCase):
 		session = repo_sec.get(session_id)
 
 		self.assertIsInstance(session, Session)
-		self.assertEqual(session.token, token.build())
-		self.assertEqual(session.profile_id, saved.id)
+		self.assertEqual(session.token, token.build().decode())
+		self.assertEqual(session.profile_id, str(saved.id))
 		self.assertFalse(session.locked)
 
 		repo_sec.lock(id=session_id)

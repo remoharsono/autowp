@@ -16,7 +16,7 @@ class TestConfigParser(unittest.TestCase):
 				'MONGO_CONNECT_TIMEOUT': None,
 				'MONGO_SOCKET_TIMEOUT': None,
 				'MONGO_SERVER_SELECTION_TIMEOUT': None,
-				'SALT': None
+				'SALT': 'test_salt' 
 			}
 
 			return envs[value]

@@ -12,11 +12,9 @@ from autowp.apps.shared.config import config, data
 
 class LoginAdapter(object):
 
-	def __init__(self, 
-		repo_profile: ProfileRepository, 
-		repo_sec: SecurityRepo, 
-		config: data.Config):
-		self.usecase = LoginUseCase(repo_profile, repo_sec)
+	def __init__(self, repo_profile: ProfileRepository, repo_sec: SecurityRepo, config: data.Config):
+		self.repo = repo_sec
+		self.usecase = LoginUseCase(repo_sec, repo_profile)
 		self.config = config
 
 	def login(self, name: str, password: str) -> Union[State, Session]:
@@ -26,6 +24,11 @@ class LoginAdapter(object):
 			autowp.core.shared.exceptions.VarTypeError: When given profile is not an instance of Profile
 			autowp.core.shared.exceptions.ValidationError: When cannot validate given profile entity
 		"""
+		if self.repo.is_exist():
+			sess_prev = self.repo.get()
+			if sess_prev:
+				self.repo.remove(sess_prev.id)				
+
 		password = Password(raw=password, hasher=Sha256Hasher)
 		profile = Profile(name=name, password=password)
 		session = self.usecase.login(self.config.salt, profile, self._login_success_callback)
@@ -35,5 +38,5 @@ class LoginAdapter(object):
 		"""Build jwt token"""
 		payload = {'name': profile.name}
 		token = Token(salt=self.config.salt, payload=payload, builder=JWTToken)
-		session = Session(token=token, locked=False)
+		session = Session(token=token, locked=False, profile_id=profile.id)
 		return session

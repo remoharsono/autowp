@@ -25,7 +25,7 @@ class SecurityRepository(SecurityRepoInterface, BaseRepository):
 			# build payload
 			payload = {
 				'profile_id': session.profile_id, 
-				'token': session.token.build(),
+				'token': session.token.build().decode(),
 				'locked': session.locked
 			}
 
@@ -64,7 +64,7 @@ class SecurityRepository(SecurityRepoInterface, BaseRepository):
 			session = Session(
 				token=sess.get('token'), 
 				locked=sess.get('locked'),
-				profile_id=sess.get('profile_id'),
+				profile_id=str(sess.get('profile_id')),
 				id=str(sess.get('_id'))
 			)
 
