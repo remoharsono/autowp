@@ -12,18 +12,19 @@ def runner(main_cb: Callback, success_cb: Optional[Callback] = None) -> NoReturn
 		main_cb()
 	except ValidationError as exc_validation:
 		# do something when validation failed
-		click.secho('Your input is not valid', fg='red')
+		click.secho(f'Your input is not valid: {exc_validation}', fg='red')
 		click.echo('=========================')
 	except VarTypeError as exc_vartype:
 		# do something when there are mismatch variable types
-		click.secho('Mismatch variable type', fg='red')
+		click.secho(f'Mismatch variable type: {exc_vartype}', fg='red')
 		click.echo('=========================')
 	except StorageError as exc_storage:
 		# do something when there is an error related with database
-		click.secho('Error data storage', fg='red')
+		click.secho(f'Error data storage: {exc_storage}', fg='red')
 		click.echo('=========================')
 	except ConfigError as exc_config:
-		click.secho(exc_config.get_message(), fg='red')
+		msg = exc_config.get_message() 
+		click.secho(f'Error config: {msg}', fg='red')
 		click.echo('=========================')
 	except NameError as exc_name_err:
 		click.secho(f'Naming error: {exc_name_err}', fg='red')
