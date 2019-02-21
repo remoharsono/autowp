@@ -46,3 +46,8 @@ autowp profile:delete myname // delete profile
 autowp profile:list // list of registered profiles
 ```
 
+Manage security
+
+```
+autowp security:login myname // will promp a question to input your password
+```
