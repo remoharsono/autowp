@@ -7,6 +7,7 @@ from autowp.apps.cli.utils.runner import runner
 from autowp.apps.cli.repository.profile import ProfileRepository
 from autowp.apps.cli.repository.security import SecurityRepository
 from autowp.apps.cli.adapter.security.login import LoginAdapter
+from autowp.apps.cli.adapter.security.logout import LogoutAdapter 
 
 @click.command('security:login', help='Login using profile name')
 @click.argument('name')
@@ -32,9 +33,18 @@ def login(name: str, password: str) -> NoReturn:
 
 	runner(_main)
 
-@click.command('security:logout', help='Logout')
+@click.command('security:logout', help='Logout from current logged in session')
 def logout() -> NoReturn:
-	pass
+	click.echo('=========================')
+	click.echo('Logging in profile....')
+
+	repo = ProfileRepository(config())
+	repo_sec = SecurityRepository(config())
+	adapter = LogoutAdapter(repo_sec, repo)
+	adapter.logout()
+
+	click.secho('You have been logged out', fg='green')
+	click.echo('=========================')
 
 @click.command('security:current', help='Show current logged in profile')
 def current() -> NoReturn:
