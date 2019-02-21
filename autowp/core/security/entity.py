@@ -1,4 +1,4 @@
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Union
 from dataclasses import dataclass
 from autowp.core.shared.base import Tokenizer
 
@@ -25,7 +25,7 @@ class Token:
 
 @dataclass(frozen=True)
 class Session:
-	token: Token
+	token: Union[str, Token] 
 	locked: bool
 	profile_id: Optional[str] = None # should be an id from database
 	id: Optional[str]  = None # should id from database

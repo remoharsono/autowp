@@ -90,6 +90,10 @@ class MemorySecurityRepo(SecurityRepo):
 	def lock(self, id: Optional[str] = None) -> NoReturn:
 		"""This method used to set current session as locked"""
 		pass
+	
+	def unlock(self, id: Optional[str] = None) -> NoReturn:
+		"""This method used to set current session as locked"""
+		pass
 
 class MemoryProfileRepo(ProfileRepository):
 	def __init__(self, memory):

@@ -10,6 +10,11 @@ class Parser(object):
 		mongo_conn_timeout = os.getenv('MONGO_CONNECT_TIMEOUT')
 		mongo_socket_timeout = os.getenv('MONGO_SOCKET_TIMEOUT')
 		mongo_server_selection_timeout = os.getenv('MONGO_SERVER_SELECTION_TIMEOUT')
+		salt = os.getenv('SALT')
+
+		# cannot continue without salt key
+		if not salt:
+			raise ConfigError('SALT', 'You should set your salt key')
 
 		# cannot continue without mongo
 		if not mongo_host:
@@ -29,7 +34,8 @@ class Parser(object):
 		self.config = conf(
 			mongo_host=mongo_host, 
 			mongo_dbname=mongo_dbname,
+			salt=salt,
 			mongo_connect_timeout=mongo_conn_timeout,
 			mongo_socket_timeout=mongo_socket_timeout,
-			mongo_server_selection_timeout=mongo_server_selection_timeout
+			mongo_server_selection_timeout=mongo_server_selection_timeout,
 		)

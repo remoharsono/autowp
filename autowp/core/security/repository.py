@@ -51,3 +51,8 @@ class SecurityRepo(BaseRepo):
 	def lock(self, id: Optional[str] = None) -> NoReturn:
 		"""This method used to set current session as locked"""
 		pass
+
+	@abstractmethod
+	def unlock(self, id: Optional[str] = None) -> NoReturn:
+		"""Used to unlock session"""
+		pass

@@ -7,7 +7,7 @@ from autowp.core.security.usecase.base import BaseSecurityUseCase
 from autowp.core.security.entity import Session
 
 from autowp.core.profile.utils.validation import ValidateProfile
-from autowp.core.profile.entity import Profile
+from autowp.core.profile.entity import Profile, Password
 
 '''
 Example success callback:
@@ -53,7 +53,14 @@ class LoginUseCase(BaseSecurityUseCase, ValidateProfile):
 		if not profile: # profile not exist
 			return State(self.STATE_NAME, self.STATE_FAILED_NO_PROFILE, 'Profile not exist')
 
-		if given_profile.password.to_hash() != profile.password.hashed:
+		password = None
+		if isinstance(profile.password, str):
+			password = profile.password
+		
+		if isinstance(profile.password, Password):
+			password = profile.password.hashed 
+
+		if given_profile.password.to_hash() != password:
 			return State(self.STATE_NAME, self.STATE_FAILED_PASSWORD_MISMTACH, 'Password mismatch')
 
 		# use callback to create a session object
@@ -67,7 +74,7 @@ class LoginUseCase(BaseSecurityUseCase, ValidateProfile):
 			locked=False, 
 			token=session_raw.token, 
 			id=session_id, 
-			profile_id=session_raw.profile_id
+			profile_id=profile.id
 		)
 
 		return session
