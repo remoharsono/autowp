@@ -8,6 +8,7 @@ from autowp.apps.cli.repository.profile import ProfileRepository
 from autowp.apps.cli.repository.security import SecurityRepository
 from autowp.apps.cli.adapter.security.login import LoginAdapter
 from autowp.apps.cli.adapter.security.logout import LogoutAdapter 
+from autowp.apps.cli.adapter.security.current_profile import CurrentProfileAdapter
 
 @click.command('security:login', help='Login using profile name')
 @click.argument('name')
@@ -48,4 +49,12 @@ def logout() -> NoReturn:
 
 @click.command('security:current', help='Show current logged in profile')
 def current() -> NoReturn:
-	pass
+	click.echo('=========================')
+
+	repo = ProfileRepository(config())
+	repo_sec = SecurityRepository(config())
+	adapter = CurrentProfileAdapter(repo, repo_sec)
+	name = adapter.show()
+
+	click.echo(f'Current logged in user: {name}')
+	click.echo('=========================')
