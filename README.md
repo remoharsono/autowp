@@ -51,4 +51,5 @@ Manage security
 ```
 autowp security:login myname // will promp a question to input your password
 autowp security:logout // logged out from current session
+autowp security:current // show your current logged in profile
 ```
