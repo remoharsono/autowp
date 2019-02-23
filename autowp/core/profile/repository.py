@@ -28,8 +28,6 @@ class ProfileRepository(BaseRepo):
 
 		Raises:
 			core.shared.exceptions.StorageError: If there is an error relate with storage
-		Returns:
-			A list of profile or a None value if there is no profiles yet
 		"""
 		pass
 
