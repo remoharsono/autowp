@@ -46,7 +46,7 @@ Make sure you have python 3.7.x and [pipenv](https://pipenv.readthedocs.io/en/la
 
 Configurations:
 
-You need to set environment variables, following this way:
+You need to set environment variables, following this way: (required)
 
 ```
 export AUTOWP_MONGO_HOST="<your_mongodb_uri>"
@@ -67,7 +67,7 @@ to activate them using `source`, example: `source ~/.bashrc` or `source ~/.zshrc
 
 # Usages
 
-After clone this repo, "cd" to `autowp` folder, and run this available commands:
+After clone this repo, "cd" to `autowp` folder, and run this available commands: (dont forget to set all of required environment variables)
 
 Manage profiles
 
