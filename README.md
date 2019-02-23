@@ -67,18 +67,20 @@ to activate them using `source`, example: `source ~/.bashrc` or `source ~/.zshrc
 
 # Usages
 
+After clone this repo, "cd" to `autowp` folder, and run this available commands:
+
 Manage profiles
 
 ```
-autowp profile:register myname mypass // register profiles
-autowp profile:delete myname // delete profile
-autowp profile:list // list of registered profiles
+python main.py profile:register myname mypass // register profiles
+python main.py profile:delete myname // delete profile
+python main.py profile:list // list of registered profiles
 ```
 
 Manage security
 
 ```
-autowp security:login myname // will promp a question to input your password
-autowp security:logout // logged out from current session
-autowp security:current // show your current logged in profile
+python main.py security:login myname // will promp a question to input your password
+python main.py security:logout // logged out from current session
+python main.py security:current // show your current logged in profile
 ```
