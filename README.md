@@ -41,7 +41,8 @@ But as long as, python (and pip) installed on your machine, this app should work
 Make sure you have python 3.7.x and [pipenv](https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv) installed on your system.
 
 - Clone this repo
-- run: `pipenv install '-e .'` 
+- run: `pipenv install '-e .'`
+- run: `python setup.py develop` 
 
 Configurations:
 
