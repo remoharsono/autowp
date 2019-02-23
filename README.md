@@ -1,4 +1,12 @@
-# AutoWP
+# AutoWP [IN DEVELOPMENT]
+
+```
+WARNING!
+
+This tools still under active developments, please do not try to install it from pypi.
+```
+
+---
 
 AutoWP is a command line interface application built to helping people managing
 their wordpress applications.
@@ -30,11 +38,31 @@ But as long as, python (and pip) installed on your machine, this app should work
 
 # Installations
 
-Make sure you have python 3.7.x and pip installed on your system.
+Make sure you have python 3.7.x and [pipenv](https://pipenv.readthedocs.io/en/latest/install/#installing-pipenv) installed on your system.
 
-```python
-pip install autowp
+- Clone this repo
+- run: `pipenv install '-e .'` 
+
+Configurations:
+
+You need to set environment variables, following this way:
+
 ```
+export AUTOWP_MONGO_HOST="<your_mongodb_uri>"
+export AUTOWP_MONGO_DBNAME="<your_db_name">
+export AUTOWP_SALT="<your_random_key_of_strings>"
+```
+
+Optional variables:
+
+```
+export AUTOWP_MONGO_CONNECT_TIMEOUT=<int> // default: 5000 (ms)
+export AUTOWP_MONGO_SOCKET_TIMEOUT=<int> // default: 1000 (ms) 
+export AUTOWP_MONGO_SERVER_SELECTION_TIMEOUT=<int> // default: 15000 (ms)
+```
+
+Place all of these variables in your `~/.bashrc` or `~/.zshrc` and dont forget
+to activate them using `source`, example: `source ~/.bashrc` or `source ~/.zshrc`
 
 # Usages
 
